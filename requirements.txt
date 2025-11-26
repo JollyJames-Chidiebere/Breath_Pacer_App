@@ -1,6 +1,0 @@
-Django>=4.2
-djangorestframework
-firebase-admin
-python-dotenv
-psycopg2-binary
-django-cors-headers
