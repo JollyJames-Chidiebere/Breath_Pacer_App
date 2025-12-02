@@ -13,6 +13,9 @@ export const saveOfflineSession = async (session: any) => {
         queue.push(session);
         await AsyncStorage.setItem("unsentSessions", JSON.stringify(queue));
         console.log("📦 Saved session locally for later sync");
+
+        // Try to sync immediately if online
+        setTimeout(() => uploadOfflineSessions(), 1000);
     } catch (error) {
         console.error("❌ Failed to store offline session:", error);
     }
@@ -44,13 +47,13 @@ export const uploadOfflineSessions = async () => {
 
         const token = await user.getIdToken();
 
-        const res = await API.post("/sync_sessions/", sessions, {
+        const res = await API.post("/api/sync_sessions/", sessions, {
             headers: { Authorization: `Bearer ${token}` },
         });
 
         console.log("✅ Synced offline sessions:", res.data.synced);
         await AsyncStorage.removeItem("unsentSessions");
-    } catch (error) {
+    } catch (error: any) {
         console.error("❌ Offline sync failed:", error);
     }
 };
